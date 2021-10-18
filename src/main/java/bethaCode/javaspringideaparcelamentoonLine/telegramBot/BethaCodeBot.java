@@ -2,9 +2,10 @@ package bethaCode.javaspringideaparcelamentoonLine.telegramBot;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import bethaCode.javaspringideaparcelamentoonLine.model.ControlaSolicitacao;
 
 public class BethaCodeBot extends TelegramLongPollingBot {
 
@@ -20,29 +21,46 @@ public class BethaCodeBot extends TelegramLongPollingBot {
 
    @Override
     public void onUpdateReceived(Update update) {
-        System.out.println(update.getMessage().getText());
-        System.out.println(update.getMessage().getFrom().getFirstName());
+
+       ControlaSolicitacao mensagem ;
+       mensagem = new ControlaSolicitacao();
+       mensagem.passo = 1 ;
+     //   System.out.println(update.getMessage().getText());
+    //    System.out.println(update.getMessage().getFrom().getFirstName());
+
         String contato = update.getMessage().getFrom().getFirstName();
+        mensagem.contato = contato ;
         Long idContato = update.getMessage().getFrom().getId();
-        Boolean grupoMsg =  update.getMessage().getFrom().getCanReadAllGroupMessages();
-        SendMessage message = new SendMessage() ;
         String command=update.getMessage().getText();
+        Integer idMessage =  update.getUpdateId() ;
+
+      //  String teste =  update.toString(); retorna os dados da mensagem
+       //  System.out.println("teste= " + teste);
+       SendMessage message = new SendMessage() ;
+
 
       int verificaCpfCnpj = command.length();
       Boolean controlaSolicitacao = false ;
-      String verificaLancamento;
+
 
         System.out.println("id = " + idContato);
-        System.out.println("id = " + grupoMsg);
+        System.out.println("contato= " + contato);
+        System.out.println("idMessage= " + idMessage);
 
-      if (verificaCpfCnpj == 11) {
-          message.setText("Que otimo "+ contato + " você digitou um cpf valido, vou checar seus debitos.. aguarde" );
+
+
+      if (verificaCpfCnpj == 11 || verificaCpfCnpj == 14 ) {
+          message.setText("Que otimo "+ contato + ", vou checar seus debitos.. aguarde" );
+          message.setChatId(String.valueOf(update.getMessage().getChatId()));
           message.setText(contato + " você possui um debito  IPTU, vamos parcelar ? temos otimas opções, digite 'Sim' para prosseguir" );
+          message.setChatId(String.valueOf(update.getMessage().getChatId()));
           controlaSolicitacao = true;
         }
 
       if(controlaSolicitacao == false) {
-          message.setText("Olá " + contato + " bem vindo ao parcelamento On-line , por favor digite seu cpf ou cnpj e aguarde enquanto consultamos seu dados");
+          //  message.setText("Olá " + contato + " bem vindo ao parcelamento On-line , por favor digite seu cpf ou cnpj e aguarde enquanto consultamos seu dados");
+          String mensagem1 = mensagem.mensagemBotPasso1();
+          message.setText(mensagem1);
       }
 
       if (command.equals("/meucpf")){
@@ -57,7 +75,7 @@ public class BethaCodeBot extends TelegramLongPollingBot {
         }
 
 
-
+     //  System.out.println(update.getMessage().getChatId());
        message.setChatId(String.valueOf(update.getMessage().getChatId()));
 
         try {
