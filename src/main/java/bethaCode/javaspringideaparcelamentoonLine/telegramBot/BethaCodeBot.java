@@ -1,11 +1,11 @@
 package bethaCode.javaspringideaparcelamentoonLine.telegramBot;
 
+import bethaCode.javaspringideaparcelamentoonLine.model.ControlaSolicitacao;
+import bethaCode.javaspringideaparcelamentoonLine.util.ValidaCpf;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
-import bethaCode.javaspringideaparcelamentoonLine.model.ControlaSolicitacao;
 
 public class BethaCodeBot extends TelegramLongPollingBot {
 
@@ -25,10 +25,10 @@ public class BethaCodeBot extends TelegramLongPollingBot {
        ControlaSolicitacao mensagem ;
        mensagem = new ControlaSolicitacao();
        mensagem.passo = 1 ;
-     //   System.out.println(update.getMessage().getText());
-    //    System.out.println(update.getMessage().getFrom().getFirstName());
+
 
         String contato = update.getMessage().getFrom().getFirstName();
+        String contatoFull = update.getMessage().getFrom().getLastName();
         mensagem.contato = contato ;
         Long idContato = update.getMessage().getFrom().getId();
         String command=update.getMessage().getText();
@@ -42,23 +42,36 @@ public class BethaCodeBot extends TelegramLongPollingBot {
       int verificaCpfCnpj = command.length();
       Boolean controlaSolicitacao = false ;
 
+       ValidaCpf validaCpf;
+       validaCpf = new ValidaCpf();
+
+       if (verificaCpfCnpj == 11 || verificaCpfCnpj == 14 ) {
+            validaCpf.cpfContato = command;
+       }
+
 
         System.out.println("id = " + idContato);
         System.out.println("contato= " + contato);
         System.out.println("idMessage= " + idMessage);
+       System.out.println("contatoFull = " + contatoFull);
 
 
 
-      if (verificaCpfCnpj == 11 || verificaCpfCnpj == 14 ) {
+     /*  if (verificaCpfCnpj == 11 || verificaCpfCnpj == 14 ) {
           message.setText("Que otimo "+ contato + ", vou checar seus debitos.. aguarde" );
           message.setChatId(String.valueOf(update.getMessage().getChatId()));
           message.setText(contato + " você possui um debito  IPTU, vamos parcelar ? temos otimas opções, digite 'Sim' para prosseguir" );
           message.setChatId(String.valueOf(update.getMessage().getChatId()));
           controlaSolicitacao = true;
-        }
+        } */
 
-      if(controlaSolicitacao == false) {
-          //  message.setText("Olá " + contato + " bem vindo ao parcelamento On-line , por favor digite seu cpf ou cnpj e aguarde enquanto consultamos seu dados");
+   /*    if (validaCpf.valido()  == true ) {
+           String mensagem1 = mensagem.mensagemBotPasso2();
+           message.setText(mensagem1);
+       }*/
+
+
+       if(controlaSolicitacao == false) {
           String mensagem1 = mensagem.mensagemBotPasso1();
           message.setText(mensagem1);
       }
@@ -70,9 +83,9 @@ public class BethaCodeBot extends TelegramLongPollingBot {
 
         System.out.println("controlaSolicitacao = "  + controlaSolicitacao + "  command " + command);
 
-      if (command.equals("Sim") && controlaSolicitacao == true){
+    /*  if (command.equals("Sim") && controlaSolicitacao == true){
             message.setText(contato + " você possui um debito de R$ 1200,00 de IPTU,  posso parcelar em.....");
-        }
+        }*/
 
 
      //  System.out.println(update.getMessage().getChatId());

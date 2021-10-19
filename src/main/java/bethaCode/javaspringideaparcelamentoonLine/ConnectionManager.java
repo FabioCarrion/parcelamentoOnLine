@@ -1,12 +1,11 @@
-package bethaCode.javaspringideaparcelamentoonLine.repository;
+package bethaCode.javaspringideaparcelamentoonLine;
 
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-/*
-public class ConnectionManagerVerComBruno {
+public class ConnectionManager{
 
     public static Connection getConnection() throws ClassNotFoundException, SQLException {
         Class.forName("org.postgresql.Driver");
@@ -16,4 +15,3 @@ public class ConnectionManagerVerComBruno {
     }
 
 }
-*/

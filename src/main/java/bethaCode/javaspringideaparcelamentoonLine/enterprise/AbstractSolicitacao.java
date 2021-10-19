@@ -2,8 +2,6 @@ package bethaCode.javaspringideaparcelamentoonLine.enterprise;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @MappedSuperclass
 public class AbstractSolicitacao extends AbstractEntity{
@@ -22,6 +20,9 @@ public class AbstractSolicitacao extends AbstractEntity{
 
     @Column(name="cpfCnpj")
     private char cpfcnpj;
+
+    @Column(name="nome")
+    private String nome;
 
     public Long getIdsolicitacao() {
         return idsolicitacao;
@@ -63,4 +64,11 @@ public class AbstractSolicitacao extends AbstractEntity{
         this.cpfcnpj = cpfcnpj;
     }
 
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 }
