@@ -1,6 +1,5 @@
 package bethaCode.javaspringideaparcelamentoonLine.model;
 
-import javax.print.attribute.standard.DateTimeAtCompleted;
 import java.sql.Date;
 
 public class Solicitacao  {
@@ -10,7 +9,7 @@ public class Solicitacao  {
     private int etapa ;
     private String situacao; /* A- Aberta P- Pendente C-Concluida*/
     private String cpfCnpj ;
-    private DateTimeAtCompleted dataSolicitacao ;
+    private Date dataSolicitacao ;
     private String nome ;
 
 
@@ -74,7 +73,7 @@ public class Solicitacao  {
         return dataSolicitacao;
     }
 
-    public void setDataSolicitacao(DateTimeAtCompleted dataSolicitacao) {
+    public void setDataSolicitacao(Date dataSolicitacao) {
         this.dataSolicitacao = dataSolicitacao;
     }
 }

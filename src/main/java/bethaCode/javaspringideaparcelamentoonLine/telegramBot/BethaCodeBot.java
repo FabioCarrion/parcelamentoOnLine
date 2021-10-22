@@ -9,7 +9,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.sql.Date;
 import java.sql.SQLException;
 
 public class BethaCodeBot extends TelegramLongPollingBot {
@@ -41,7 +40,7 @@ public class BethaCodeBot extends TelegramLongPollingBot {
         Long idContato = update.getMessage().getFrom().getId();
         String command = update.getMessage().getText();
         Integer idMessage = update.getUpdateId();
-        Date dataSolicitacao = new Date() ;
+       // Date dataSolicitacao = new Date() ;
         String mensagemCpfCnpj = null ;
         int etapa = 1;
         String mensagemSituacao = "A" ;
@@ -66,7 +65,7 @@ public class BethaCodeBot extends TelegramLongPollingBot {
                 Solicitacao criaSolicitacao = new Solicitacao();
                 criaSolicitacao.setIdContato(idContato);
                 criaSolicitacao.setIdSolicitacao(idMessage);
-                criaSolicitacao.setDataSolicitacao(dataSolicitacao);
+                criaSolicitacao.setDataSolicitacao(null);
                 criaSolicitacao.setEtapa(etapa);
                 criaSolicitacao.setCpfCnpj(mensagemCpfCnpj);
                 criaSolicitacao.setSituacao(mensagemSituacao);

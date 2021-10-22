@@ -16,7 +16,7 @@ public class SolicitacaoRepository {
             statement.setLong(3,solicitacao.getEtapa());
             statement.setString(4,solicitacao.getSituacao());
             statement.setString(5,solicitacao.getCpfCnpj());
-            statement.setDate(6, solicitacao.getDataSolicitacao());
+           statement.setDate(6, solicitacao.getDataSolicitacao());
             statement.setString(7,solicitacao.getNome());
             statement.executeUpdate();
             System.out.println("---- Create POR ID FIM ----");
