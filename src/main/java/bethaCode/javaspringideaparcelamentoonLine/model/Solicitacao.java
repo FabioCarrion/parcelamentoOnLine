@@ -1,35 +1,33 @@
 package bethaCode.javaspringideaparcelamentoonLine.model;
 
-import java.util.Date;
+import javax.print.attribute.standard.DateTimeAtCompleted;
+import java.sql.Date;
 
-public class solicitacao  {
+public class Solicitacao  {
 
-    private Long idSolicitacao ;
+    private Integer idSolicitacao ;
     private Long idContato ;
     private int etapa ;
-    private char situacao; /* A- Aberta P- Pendente C-Concluida*/
+    private String situacao; /* A- Aberta P- Pendente C-Concluida*/
     private String cpfCnpj ;
-    private Date dataSolicitacao ;
+    private DateTimeAtCompleted dataSolicitacao ;
     private String nome ;
 
-    public void cliente() {
 
-    }
-
-    public solicitacao(Long idSolicitacao, Long idContato, int etapa, char situacao, String cpfCnpj, Date dataSolicitacao) {
+  /*  public Solicitacao(Long idSolicitacao, Long idContato, int etapa, char situacao, String cpfCnpj, Date dataSolicitacao) {
         this.idSolicitacao = idSolicitacao;
         this.idContato = idContato;
         this.etapa = etapa;
         this.situacao = situacao;
         this.cpfCnpj = cpfCnpj;
         this.dataSolicitacao = dataSolicitacao;
-    }
+    }*/
 
-    public Long getIdSolicitacao() {
+    public Integer getIdSolicitacao() {
         return idSolicitacao;
     }
 
-    public void setIdSolicitacao(Long idSolicitacao) {
+    public void setIdSolicitacao(Integer idSolicitacao) {
         this.idSolicitacao = idSolicitacao;
     }
 
@@ -49,11 +47,18 @@ public class solicitacao  {
         this.etapa = etapa;
     }
 
-    public char getSituacao() {
-        return situacao;
+    public String getSituacao() {
+        return this.situacao;
+    }
+    public String getNome() {
+        return nome;
     }
 
-    public void setSituacao(char situacao) {
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public void setSituacao(String situacao) {
         this.situacao = situacao;
     }
 
@@ -69,15 +74,9 @@ public class solicitacao  {
         return dataSolicitacao;
     }
 
-    public void setDataSolicitacao(Date dataSolicitacao) {
+    public void setDataSolicitacao(DateTimeAtCompleted dataSolicitacao) {
         this.dataSolicitacao = dataSolicitacao;
     }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
 }
+
+

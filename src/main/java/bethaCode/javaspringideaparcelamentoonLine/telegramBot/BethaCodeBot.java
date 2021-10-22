@@ -1,11 +1,16 @@
 package bethaCode.javaspringideaparcelamentoonLine.telegramBot;
 
 import bethaCode.javaspringideaparcelamentoonLine.model.ControlaSolicitacao;
+import bethaCode.javaspringideaparcelamentoonLine.model.Solicitacao;
+import bethaCode.javaspringideaparcelamentoonLine.repository.SolicitacaoRepository;
 import bethaCode.javaspringideaparcelamentoonLine.util.ValidaCpf;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.sql.Date;
+import java.sql.SQLException;
 
 public class BethaCodeBot extends TelegramLongPollingBot {
 
@@ -19,77 +24,91 @@ public class BethaCodeBot extends TelegramLongPollingBot {
         return "1954985173:AAEjS4uCAQnBzgJOA4qsreOllCg5WZzB9JA";
     }
 
-   @Override
+    @Override
     public void onUpdateReceived(Update update) {
+        // Metodo do telegram para mensagens
+        SendMessage message = new SendMessage();
+        //Fim
 
-       ControlaSolicitacao mensagem ;
-       mensagem = new ControlaSolicitacao();
-       mensagem.passo = 1 ;
+        //Instancia a classe que contém mensagens
+        ControlaSolicitacao mensagem;
+        mensagem = new ControlaSolicitacao();
+        //Fim
 
-
+        // Captura  dados da mensagem e atribui a variavel
         String contato = update.getMessage().getFrom().getFirstName();
-        String contatoFull = update.getMessage().getFrom().getLastName();
-        mensagem.contato = contato ;
+        String nomeContatoFull = contato + " " + update.getMessage().getFrom().getLastName();
         Long idContato = update.getMessage().getFrom().getId();
-        String command=update.getMessage().getText();
-        Integer idMessage =  update.getUpdateId() ;
+        String command = update.getMessage().getText();
+        Integer idMessage = update.getUpdateId();
+        Date dataSolicitacao = new Date() ;
+        String mensagemCpfCnpj = null ;
+        int etapa = 1;
+        String mensagemSituacao = "A" ;
+        //Fim captura
 
-      //  String teste =  update.toString(); retorna os dados da mensagem
-       //  System.out.println("teste= " + teste);
-       SendMessage message = new SendMessage() ;
 
 
-      int verificaCpfCnpj = command.length();
-      Boolean controlaSolicitacao = false ;
+        //Envia contato para classe que contém mensagens
+          mensagem.contato = contato;
+        //Fim
 
-       ValidaCpf validaCpf;
-       validaCpf = new ValidaCpf();
+        //Temp para demonstrar quando não entrar no if do try abaixo
+        message.setText(nomeContatoFull);
 
-       if (verificaCpfCnpj == 11 || verificaCpfCnpj == 14 ) {
+        try {
+            Solicitacao solicitacao = SolicitacaoRepository.findById(idContato);
+            // System.out.println(solicitacao.getEtapa());
+            System.out.println("o que o banco retorna : " + solicitacao);
+            if (solicitacao == null) {
+                String mensagem1 = mensagem.mensagemBotPasso1();
+                message.setText(mensagem1);
+                Solicitacao criaSolicitacao = new Solicitacao();
+                criaSolicitacao.setIdContato(idContato);
+                criaSolicitacao.setIdSolicitacao(idMessage);
+                criaSolicitacao.setDataSolicitacao(dataSolicitacao);
+                criaSolicitacao.setEtapa(etapa);
+                criaSolicitacao.setCpfCnpj(mensagemCpfCnpj);
+                criaSolicitacao.setSituacao(mensagemSituacao);
+
+
+
+                SolicitacaoRepository.create(criaSolicitacao);
+
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
+        int verificaCpfCnpj = command.length();
+        Boolean controlaSolicitacao = false;
+
+        ValidaCpf validaCpf;
+        validaCpf = new ValidaCpf();
+
+        if (verificaCpfCnpj == 11 || verificaCpfCnpj == 14) {
             validaCpf.cpfContato = command;
-       }
+        }
 
 
         System.out.println("id = " + idContato);
         System.out.println("contato= " + contato);
         System.out.println("idMessage= " + idMessage);
-       System.out.println("contatoFull = " + contatoFull);
+        System.out.println("contatoFull = " + nomeContatoFull);
 
 
+        if (command.equals("/meucpf")) {
+            System.out.println(update.getMessage().getFrom().getFirstName());
+            message.setText("Olá " + update.getMessage().getFrom().getFirstName() + " Inicie informando seu cpf para a consulta");
+        }
 
-     /*  if (verificaCpfCnpj == 11 || verificaCpfCnpj == 14 ) {
-          message.setText("Que otimo "+ contato + ", vou checar seus debitos.. aguarde" );
-          message.setChatId(String.valueOf(update.getMessage().getChatId()));
-          message.setText(contato + " você possui um debito  IPTU, vamos parcelar ? temos otimas opções, digite 'Sim' para prosseguir" );
-          message.setChatId(String.valueOf(update.getMessage().getChatId()));
-          controlaSolicitacao = true;
-        } */
+        System.out.println("controlaSolicitacao = " + controlaSolicitacao + "  command " + command);
 
-   /*    if (validaCpf.valido()  == true ) {
-           String mensagem1 = mensagem.mensagemBotPasso2();
-           message.setText(mensagem1);
-       }*/
-
-
-       if(controlaSolicitacao == false) {
-          String mensagem1 = mensagem.mensagemBotPasso1();
-          message.setText(mensagem1);
-      }
-
-      if (command.equals("/meucpf")){
-          System.out.println(update.getMessage().getFrom().getFirstName());
-          message.setText("Olá " + update.getMessage().getFrom().getFirstName() + " Inicie informando seu cpf para a consulta");
-      }
-
-        System.out.println("controlaSolicitacao = "  + controlaSolicitacao + "  command " + command);
-
-    /*  if (command.equals("Sim") && controlaSolicitacao == true){
-            message.setText(contato + " você possui um debito de R$ 1200,00 de IPTU,  posso parcelar em.....");
-        }*/
-
-
-     //  System.out.println(update.getMessage().getChatId());
-       message.setChatId(String.valueOf(update.getMessage().getChatId()));
+        message.setChatId(String.valueOf(update.getMessage().getChatId()));
 
         try {
             execute(message);
