@@ -4,6 +4,8 @@
       <root url="jar://$PROJECT_DIR$/../Documentos/DocParticular/bibliotecasJava/jdbcConnectors/postgresql-42.3.0.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../.ideaLibSources/postgresql-42.3.0-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>

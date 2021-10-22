@@ -69,9 +69,7 @@ public class BethaCodeBot extends TelegramLongPollingBot {
                 criaSolicitacao.setEtapa(etapa);
                 criaSolicitacao.setCpfCnpj(mensagemCpfCnpj);
                 criaSolicitacao.setSituacao(mensagemSituacao);
-
-
-
+                criaSolicitacao.setNome(nomeContatoFull);
                 SolicitacaoRepository.create(criaSolicitacao);
 
             }

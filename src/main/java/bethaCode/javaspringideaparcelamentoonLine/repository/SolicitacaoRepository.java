@@ -10,13 +10,13 @@ public class SolicitacaoRepository {
 
         public static void create (Solicitacao solicitacao) throws SQLException, ClassNotFoundException {
             Connection conn = ConnectionManager.getConnection();
-            PreparedStatement statement = conn.prepareStatement("insert into telegram.solicitacao (?,?,?,?,?,?,?) ");
+            PreparedStatement statement = conn.prepareStatement("insert into telegram.solicitacao values(?,?,?,?,?,?,?) ");
             statement.setLong(1,solicitacao.getIdSolicitacao());
             statement.setLong(2,solicitacao.getIdContato());
             statement.setLong(3,solicitacao.getEtapa());
             statement.setString(4,solicitacao.getSituacao());
             statement.setString(5,solicitacao.getCpfCnpj());
-           statement.setDate(6, solicitacao.getDataSolicitacao());
+            statement.setDate(6, solicitacao.getDataSolicitacao());
             statement.setString(7,solicitacao.getNome());
             statement.executeUpdate();
             System.out.println("---- Create POR ID FIM ----");
