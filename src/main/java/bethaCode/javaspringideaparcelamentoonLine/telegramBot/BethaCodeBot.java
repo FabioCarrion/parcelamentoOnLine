@@ -35,21 +35,27 @@ public class BethaCodeBot extends TelegramLongPollingBot {
         //Fim
 
         // Captura  dados da mensagem e atribui a variavel
+         String nomeContatoFull;
         String contato = update.getMessage().getFrom().getFirstName();
-        String nomeContatoFull = contato + " " + update.getMessage().getFrom().getLastName();
+        if (update.getMessage().getFrom().getLastName() == null) {
+            nomeContatoFull = contato + " " + update.getMessage().getFrom().getLastName();
+        } else {
+            nomeContatoFull = contato;
+        }
+
+
         Long idContato = update.getMessage().getFrom().getId();
         String command = update.getMessage().getText();
         Integer idMessage = update.getUpdateId();
-       // Date dataSolicitacao = new Date() ;
-        String mensagemCpfCnpj = null ;
-        int etapa = 1;
-        String mensagemSituacao = "A" ;
+
+        String mensagemCpfCnpj = null;
+        int etapa;
+        String mensagemSituacao = "A";
+        String aceitaParc = command;
         //Fim captura
 
-
-
         //Envia contato para classe que contém mensagens
-          mensagem.contato = contato;
+        mensagem.contato = contato;
         //Fim
 
         //Temp para demonstrar quando não entrar no if do try abaixo
@@ -57,16 +63,21 @@ public class BethaCodeBot extends TelegramLongPollingBot {
 
         try {
             Solicitacao solicitacao = SolicitacaoRepository.findById(idContato);
-            // System.out.println(solicitacao.getEtapa());
-            System.out.println("o que o banco retorna : " + solicitacao);
+
             if (solicitacao == null) {
+                etapa = 0;
+            } else {
+                etapa = solicitacao.getEtapa();
+            }
+
+            if (etapa == 0) {
                 String mensagem1 = mensagem.mensagemBotPasso1();
                 message.setText(mensagem1);
                 Solicitacao criaSolicitacao = new Solicitacao();
                 criaSolicitacao.setIdContato(idContato);
                 criaSolicitacao.setIdSolicitacao(idMessage);
                 criaSolicitacao.setDataSolicitacao(null);
-                criaSolicitacao.setEtapa(etapa);
+                criaSolicitacao.setEtapa(1);
                 criaSolicitacao.setCpfCnpj(mensagemCpfCnpj);
                 criaSolicitacao.setSituacao(mensagemSituacao);
                 criaSolicitacao.setNome(nomeContatoFull);
@@ -74,23 +85,68 @@ public class BethaCodeBot extends TelegramLongPollingBot {
 
             }
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+            if (etapa == 1) {
+                ValidaCpf validaCpf = new ValidaCpf();
+                if (command.length() <= 14) {
+                    validaCpf.cpfContato = command;
+                }
+                boolean valido = validaCpf.valido();
+                if (valido) {
+                    String cpfCnpj = command.replace(".","");
+                    cpfCnpj = cpfCnpj.replace("-","");
+                    cpfCnpj = cpfCnpj.replace("/","");
+                    System.out.println("cpfCnpj " + cpfCnpj);
+                    String mensagem2 = mensagem.mensagemBotPasso2();
+                    message.setText(mensagem2);
+                    Solicitacao atualizaSolicitacao = new Solicitacao();
+                    atualizaSolicitacao.setIdSolicitacao(idMessage);
+                    atualizaSolicitacao.setEtapa(2);
+                    atualizaSolicitacao.setCpfCnpj(cpfCnpj);
+                    atualizaSolicitacao.setIdContato(idContato);
+                    SolicitacaoRepository.update(atualizaSolicitacao);
+                } else {
+                    message.setText(mensagem.mensagemBotPasso6());
+                }
+
+            }
+
+            if (etapa == 2) {
+               aceitaParc = aceitaParc.toLowerCase().replaceAll("ã", "a");
+               if (aceitaParc.equals("sim")) {
+                    String mensagem3 = mensagem.mensagemBotPasso3();
+                    message.setText(mensagem3);
+                    Solicitacao atualizaSolicitacaoPasso3 = new Solicitacao();
+                    atualizaSolicitacaoPasso3.setIdSolicitacao(idMessage);
+                    atualizaSolicitacaoPasso3.setEtapa(3);
+                    atualizaSolicitacaoPasso3.setIdContato(idContato);
+                    SolicitacaoRepository.updatePasso3(atualizaSolicitacaoPasso3);
+                } else if (aceitaParc.equals("nao")) {
+                    String mensagem4 = mensagem.mensagemBotPasso4();
+                    message.setText(mensagem4);
+                    Solicitacao deletaSolicitacao = new Solicitacao();
+                    deletaSolicitacao.setIdContato(idContato);
+                    SolicitacaoRepository.delete(deletaSolicitacao);
+                } else {
+                    String mensagem5 = mensagem.mensagemBotPasso5();
+                    message.setText(mensagem5);
+                }
+            }
+
+            if (etapa == 3) {
+                aceitaParc = aceitaParc.toLowerCase();
+                if (aceitaParc.equals("sair")) {
+                    String mensagem4 = mensagem.mensagemBotPasso4();
+                    message.setText(mensagem4);
+                    Solicitacao deletaSolicitacao = new Solicitacao();
+                    deletaSolicitacao.setIdContato(idContato);
+                    SolicitacaoRepository.delete(deletaSolicitacao);
+                }
+            }
+
+
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-
-
-        int verificaCpfCnpj = command.length();
-        Boolean controlaSolicitacao = false;
-
-        ValidaCpf validaCpf;
-        validaCpf = new ValidaCpf();
-
-        if (verificaCpfCnpj == 11 || verificaCpfCnpj == 14) {
-            validaCpf.cpfContato = command;
-        }
-
 
         System.out.println("id = " + idContato);
         System.out.println("contato= " + contato);
@@ -102,8 +158,6 @@ public class BethaCodeBot extends TelegramLongPollingBot {
             System.out.println(update.getMessage().getFrom().getFirstName());
             message.setText("Olá " + update.getMessage().getFrom().getFirstName() + " Inicie informando seu cpf para a consulta");
         }
-
-        System.out.println("controlaSolicitacao = " + controlaSolicitacao + "  command " + command);
 
         message.setChatId(String.valueOf(update.getMessage().getChatId()));
 

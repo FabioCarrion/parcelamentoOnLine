@@ -7,7 +7,7 @@ public class ValidaCpf {
       String valorcpf  = cpfContato;
        valorcpf  = valorcpf.replace(".","");
        valorcpf  = valorcpf.replace("-","");
-       valorcpf  = valorcpf.replace("/","");
+        System.out.println("valorcpf  "+ valorcpf);
       int digito1 = 0  ;
       int digito2 = 0 ;
       int multiplicadordigito1 = 10 ;
@@ -49,4 +49,7 @@ public class ValidaCpf {
       }
 
   }
+
+
+
 }
