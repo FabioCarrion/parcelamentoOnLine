@@ -39,7 +39,7 @@ public class SolicitacaoRepository {
         } else {
             return null;
         }
-        System.out.println("---- Listagem INI ----");
+        System.out.println("---- Listagem SolicitacaoRepository ----");
         int index3 = resultSet3.getInt(3);
         String index7 = resultSet3.getString(7);
         System.out.println("Resultado da consulta : " + index3 + " Nome :" + index7);

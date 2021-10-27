@@ -73,11 +73,13 @@ public class Solicitacao {
     }
 
     public Timestamp getDataSolicitacao() {
-        return dataSolicitacao;
+
+          return dataSolicitacao;
     }
 
     public void setDataSolicitacao(Timestamp dataSolicitacao) {
-        this.dataSolicitacao = dataSolicitacao;
+
+          this.dataSolicitacao = dataSolicitacao;
     }
 }
 

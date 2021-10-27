@@ -1,7 +1,9 @@
 package bethaCode.javaspringideaparcelamentoonLine.telegramBot;
 
 import bethaCode.javaspringideaparcelamentoonLine.model.ControlaSolicitacao;
+import bethaCode.javaspringideaparcelamentoonLine.model.Dividas;
 import bethaCode.javaspringideaparcelamentoonLine.model.Solicitacao;
+import bethaCode.javaspringideaparcelamentoonLine.repository.DividasRepository;
 import bethaCode.javaspringideaparcelamentoonLine.repository.SolicitacaoRepository;
 import bethaCode.javaspringideaparcelamentoonLine.util.ValidaCpf;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -64,6 +66,7 @@ public class BethaCodeBot extends TelegramLongPollingBot {
         try {
             Solicitacao solicitacao = SolicitacaoRepository.findById(idContato);
 
+
             if (solicitacao == null) {
                 etapa = 0;
             } else {
@@ -86,28 +89,41 @@ public class BethaCodeBot extends TelegramLongPollingBot {
             }
 
             if (etapa == 1) {
-                ValidaCpf validaCpf = new ValidaCpf();
-                if (command.length() <= 14) {
-                    validaCpf.cpfContato = command;
-                }
-                boolean valido = validaCpf.valido();
-                if (valido) {
-                    String cpfCnpj = command.replace(".","");
-                    cpfCnpj = cpfCnpj.replace("-","");
-                    cpfCnpj = cpfCnpj.replace("/","");
-                    System.out.println("cpfCnpj " + cpfCnpj);
-                    String mensagem2 = mensagem.mensagemBotPasso2();
-                    message.setText(mensagem2);
-                    Solicitacao atualizaSolicitacao = new Solicitacao();
-                    atualizaSolicitacao.setIdSolicitacao(idMessage);
-                    atualizaSolicitacao.setEtapa(2);
-                    atualizaSolicitacao.setCpfCnpj(cpfCnpj);
-                    atualizaSolicitacao.setIdContato(idContato);
-                    SolicitacaoRepository.update(atualizaSolicitacao);
-                } else {
-                    message.setText(mensagem.mensagemBotPasso6());
-                }
 
+                if (command.length() <= 8 ) {
+                    String mensagem6 = mensagem.mensagemBotPasso6();
+                    message.setText(mensagem6);
+                }else {
+                    ValidaCpf validaCpf = new ValidaCpf();
+                    validaCpf.cpfContato = command;
+                    boolean valido = validaCpf.valido();
+                    if (valido) {
+                        String cpfCnpj = command.replace(".", "");
+                        cpfCnpj = cpfCnpj.replace("-", "");
+                        cpfCnpj = cpfCnpj.replace("/", "");
+                        System.out.println("cpfCnpj " + cpfCnpj);
+                        Dividas divida = DividasRepository.findBycpfcnpj(cpfCnpj);
+                        if (divida == null) {
+                            String mensagem7 = mensagem.mensagemBotPasso7();
+                            message.setText(mensagem7);
+                            Solicitacao deletaSolicitacao = new Solicitacao();
+                            deletaSolicitacao.setIdContato(idContato);
+                            SolicitacaoRepository.delete(deletaSolicitacao);
+
+                        } else {
+                            String mensagem2 = mensagem.mensagemBotPasso2();
+                            message.setText(mensagem2);
+                            Solicitacao atualizaSolicitacao = new Solicitacao();
+                            atualizaSolicitacao.setIdSolicitacao(idMessage);
+                            atualizaSolicitacao.setEtapa(2);
+                            atualizaSolicitacao.setCpfCnpj(cpfCnpj);
+                            atualizaSolicitacao.setIdContato(idContato);
+                            SolicitacaoRepository.update(atualizaSolicitacao);
+                        }
+                    } else {
+                        message.setText(mensagem.mensagemBotPasso6());
+                    }
+                }
             }
 
             if (etapa == 2) {
